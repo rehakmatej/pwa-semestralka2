@@ -1,34 +1,114 @@
 const express = require('express');
 const path = require('path');
-const generatePassword = require('password-generator');
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+var bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+// Import our User schema
+const User = require('./models/User.js');
+const authCheck = require('./middleware/authCheck.js');
 
 const app = express();
+const mongo_uri = process.env.MONGO_URI;
+const secret = process.env.SECRET;
+
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-// Put all API endpoints under '/api'
-app.get('/api/passwords', (req, res) => {
-  const count = 5;
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
-  // Generate some passwords
-  const passwords = Array.from(Array(count).keys()).map(i =>
-    generatePassword(12, false)
-  )
+mongoose.connect(mongo_uri, { useNewUrlParser: true }, function (err) {
+  if (err) {
+    throw err;
+  } else {
+    console.log(`Successfully connected to ${mongo_uri}`);
+  }
+});
 
-  // Return them as json
-  res.json(passwords);
+app.get('/api/home', function (req, res) {
+  res.send('Welcome!');
+});
+app.get('/api/secret', authCheck, function (req, res) {
+  res.send('The password is potato');
+});
+app.get('/checkToken', authCheck, function (req, res) {
+  res.sendStatus(200);
+});
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'));
+});
 
-  console.log(`Sent ${count} passwords`);
+// POST route to register a user
+app.post('/api/register', function (req, res) {
+  const { nickName, password } = req.body;
+  const user = new User({ nickName, password });
+  user.save(function (err) {
+    if (!err) {
+      res.status(200).send();
+    } else {
+      switch (err.code) {
+        case 11000:
+          res.status(409)
+            .send();
+          break;
+        default:
+          res.status(500)
+            .send();
+      }
+    }
+  });
+});
+
+app.post('/api/authenticate', function (req, res) {
+  const { nickName, password } = req.body;
+  User.findOne({ nickName }, function (err, user) {
+    if (err) {
+      console.error(err);
+      res.status(500)
+        .json({
+          error: 'Interní chyba'
+        });
+    } else if (!user) {
+      res.status(401)
+        .json({
+          error: 'Špatný nickname nebo heslo'
+        });
+    } else {
+      user.isCorrectPassword(password, function (err, same) {
+        if (err) {
+          res.status(500)
+            .json({
+              error: 'Interní chyba'
+            });
+        } else if (!same) {
+          res.status(401)
+            .json({
+              error: 'Špatný nickname nebo heslo'
+            });
+        } else {
+          // Issue token
+          const payload = { nickName };
+          const token = jwt.sign(payload, secret, {
+            expiresIn: '1h'
+          });
+          res.cookie('token', token, { httpOnly: false })
+            .sendStatus(200);
+        }
+      });
+    }
+  });
 });
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname+'/client/build/index.html'));
+  //res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
 
 const port = process.env.PORT || 5000;
 app.listen(port);
 
-console.log(`Password generator listening on ${port}`);
+console.log(`Server listening on ${port}`);
