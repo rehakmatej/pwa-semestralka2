@@ -37,8 +37,10 @@ class App extends Component {
       isOpen: false,
       nickName : ""
     };
+    if(cookies.get('token') !== undefined) {
     var decoded = decode(cookies.get('token'));
     appStore.nickName = decoded.nickName;
+    }
     //alert(appStore.nickName);
   }
 
