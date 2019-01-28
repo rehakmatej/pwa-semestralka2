@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const UserSchema = new mongoose.Schema({
-  nickName: { type: String, required: true, unique: true },
+  nickName: { type: String, required: true, index: { unique: true } },
   password: { type: String, required: true }
 });
 UserSchema.pre('save', function(next) {

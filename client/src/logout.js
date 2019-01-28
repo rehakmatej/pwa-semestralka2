@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import cookie from "react-cookie";
+import Cookies from 'universal-cookie';
 import './App.css'
+
+const cookies = new Cookies();
 
 export default class Logout extends Component {
     componentDidMount() {
-      cookie.remove("token");
+      cookies.remove('token');
+      this.props.nickNamePropHandler("");
     }
     render() {
       return (
