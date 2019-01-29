@@ -53,7 +53,6 @@ export default class Login extends Component {
   render() {
     return (
       <Form onSubmit={this.onSubmit}>
-        <Row>
             <Col sm="12" md={{ size: 3, offset: 4 }}>
                 <h1 className="text-center">Přihlášení</h1>
                 <FormGroup>
@@ -79,10 +78,7 @@ export default class Login extends Component {
 
                 <Button className="text-center" type="submit">Přihlásit</Button>
                 </FormGroup>
-            </Col>
-        </Row>
-        
-        
+            </Col>    
       </Form>
     );
   }

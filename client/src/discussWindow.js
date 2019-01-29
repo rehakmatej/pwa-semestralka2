@@ -10,10 +10,8 @@ export default class DiscussWindow extends Component {
     super();
     //Set default message
     this.state = {
-      message: 'Loading...',
-      sidebarOpen: true
+      message: 'Loading...'
     }
-    this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
   }
 
   onSetSidebarOpen(open) {
@@ -28,9 +26,10 @@ export default class DiscussWindow extends Component {
   }
   render() {
     return (
+      <div style={{backgroundColor: '#808080' }}>
       <Container fluid>
-        <Row style={{ height: '90.8vh' }}>
-          <Col id="chatWindow" sm="10" style={{ backgroundColor: 'white', textAlign: 'left', height: '80vh', overflowY: 'scroll' }}>
+        <Row style={{ height: '80vh', backgroundColor: '#808080' }}>
+          <Col id="chatWindow" sm="10" style={{ backgroundColor: 'white', textAlign: 'left', height: '100%', overflowY: 'scroll' }}>
             <ChatItem
               avatar={'none'}
               alt={'Reactjs'}
@@ -39,50 +38,26 @@ export default class DiscussWindow extends Component {
               date={new Date()}
               unread={0} />
           </Col>
-          <Col style={{ backgroundColor: '#808080', color: 'black', height: '94vh' }} sm="2"> <h3 className="text-center">Diskuse</h3>
-            <ListGroup style={{ color: 'black', textAlign: 'center', maxHeight: '85vh', overflowX: 'hidden' }}>
+          <Col style={{ backgroundColor: '#808080', color: 'black', height: '110%' }} sm="2"> <h3 className="text-center">Diskuse</h3>
+            <ListGroup style={{ color: 'black', textAlign: 'center', maxHeight: '80vh', overflowX: 'hidden' }}>
               <ListGroupItem>Pokus č.1</ListGroupItem>
               <ListGroupItem>Pokus č.1</ListGroupItem>
               <ListGroupItem>Pokus č.1</ListGroupItem>
               <ListGroupItem>Pokus č.1</ListGroupItem>
               <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-              <ListGroupItem>Pokus č.1</ListGroupItem>
-
             </ListGroup>
           </Col>
-          <Col className='fixed-bottom' sm="10" style={{ backgroundColor: '#808080', color: 'black', height: '14vh', paddingTop: '2vh' }}>
-            <Input
-              placeholder="Zadejte příspěvek..."
-              multiline={true}
-              minHeight={100}
-              maxHeight={100}
-              rightButtons={
-                <Button
-                  style={{ backgroundColor: '#808080', color: 'black', height: '10vh' }}
-                  >Odeslat</Button>
-              } />
+          <Col className='fixed-bottom' sm="10" style={{ backgroundColor: '#808080', color: 'black', height: '12vh', paddingTop: '1vh' }}>
+            <Form>
+              <FormGroup check inline>           
+                <textarea cols="100"></textarea>
+                <Button>Submit</Button>
+              </FormGroup>
+            </Form>
           </Col>
         </Row>
       </Container>
+      </div>
     );
   }
 }

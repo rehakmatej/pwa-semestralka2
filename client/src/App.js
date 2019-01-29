@@ -21,6 +21,8 @@ import Login from './login';
 import Logout from './logout';
 import withAuth from './withAuth';
 import Registration from './registration'
+import CreateRoom from './createRoom'
+import MyDiscuss from './myDiscuss'
 import NoMatch from './noMatch'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.css';
@@ -91,10 +93,10 @@ class App extends Component {
                 {this.state.nickName}
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem >
+                <DropdownItem tag={Link} to="/mojediskuse" href="">
                   Moje diskuse
                   </DropdownItem>
-                <DropdownItem>
+                <DropdownItem tag={Link} to="/vytvoritdiskusi" href="">
                   Vytvořit diskusi
                   </DropdownItem>
                 <DropdownItem divider />
@@ -128,6 +130,8 @@ class App extends Component {
             <Route path="/logout" render={(props) => <Logout {...props} nickNamePropHandler={this.nickNameHandler} />} />
             <Route path="/registrace" component={Registration} />
             <Route path="/diskuse" component={withAuth(DiscussWindow)} />
+            <Route path="/vytvoritdiskusi" component={withAuth(CreateRoom)} />
+            <Route path="/mojediskuse" component={withAuth(MyDiscuss)} />
             <Route path="/secret" component={withAuth(Secret)} />
             <Route component={NoMatch} />
           </Switch>

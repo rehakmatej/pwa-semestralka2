@@ -54,7 +54,6 @@ export default class Registration extends React.Component {
     render() {
         return (
             <Form onSubmit={this.onSubmit}>
-                <Row>
                     <Col sm="12" md={{ size: 3, offset: 4 }}>
                     <h1 className="text-center">Registrace</h1>
                         <FormGroup>
@@ -94,7 +93,6 @@ export default class Registration extends React.Component {
                         </FormGroup>
                         <Button type="submit">Zaregistrovat</Button>
                     </Col>
-                </Row>
             </Form>
         );
     }

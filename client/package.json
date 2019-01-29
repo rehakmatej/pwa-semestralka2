@@ -8,6 +8,7 @@
     "js-cookie": "^2.2.0",
     "jwt-decode": "^2.2.0",
     "react": "^16.7.0",
+    "react-bootstrap-typeahead": "^3.3.1",
     "react-chat-elements": "^10.2.0",
     "react-cookie": "^3.0.8",
     "react-dom": "^16.7.0",
