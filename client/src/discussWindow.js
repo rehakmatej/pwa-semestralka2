@@ -10,7 +10,7 @@ import './twoColumn.css';
 import './App.css';
 
 const cookies = new Cookies();
-const socket = openSocket('http://localhost:5000');
+const socket = openSocket('http://pwa-semestralka2.herokuapp.com:5000');
 
 export default class DiscussWindow extends Component {
   constructor() {
@@ -20,7 +20,7 @@ export default class DiscussWindow extends Component {
     this.changeRoom = this.changeRoom.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.saveMessageToState = this.saveMessageToState.bind(this);
-    this.socket = openSocket('http://localhost:5000');
+
     //Set default message
     this.state = {
       rooms: [],
@@ -93,6 +93,7 @@ export default class DiscussWindow extends Component {
   sendBtnClick() {
     if (this.state.roomName !== "") {
       socket.emit('msgSent', { author: this.state.nickName, room: this.state.roomName, time: new Date(), message: this.msgRef.current.value });
+      this.msgRef.current.value = "";
     }
   }
 
