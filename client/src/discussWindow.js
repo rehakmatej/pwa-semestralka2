@@ -10,7 +10,7 @@ import './twoColumn.css';
 import './App.css';
 
 const cookies = new Cookies();
-const socket = openSocket('https://pwa-semestralka2.herokuapp.com:5000');
+const socket = openSocket('https://pwa-semestralka2.herokuapp.com');
 
 export default class DiscussWindow extends Component {
   constructor() {
