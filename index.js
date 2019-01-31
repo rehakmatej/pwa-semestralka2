@@ -7,9 +7,12 @@ const cookieParser = require('cookie-parser');
 // Import our User schema
 const User = require('./models/User.js');
 const Room = require('./models/Room.js');
+const Message = require('./models/Message.js');
 const authCheck = require('./middleware/authCheck.js');
 
 const app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 const mongo_uri = process.env.MONGO_URI;
 const secret = process.env.SECRET;
 
@@ -32,25 +35,42 @@ mongoose.connect(mongo_uri, { useNewUrlParser: true }, function (err) {
 app.get('/api/home', function (req, res) {
   res.send('Welcome!');
 });
+
 app.get('/api/secret', authCheck, function (req, res) {
   res.send('The password is potato');
 });
+
 app.get('/api/getAllUsers', authCheck, function (req, res) {
   User.find({}, { '_id': 0, 'nickName' :1}, function (err, docs) {
     res.status(200).json(docs);
  });
 });
+
 app.get('/api/getMyRooms/:nickName', authCheck, function (req, res) {
   var nickName = req.params.nickName;
-  console.log(req.params.nickName);
   Room.find({owner: nickName}, { '_id': 0, '__v': 0}, function (err, docs) {
-    console.log(JSON.stringify(docs));
    res.status(200).json(docs);
   });
 });
+
+app.get('/api/getMemberRooms/:nickName', authCheck, function (req, res) {
+  var nickName = req.params.nickName;
+  Room.find({members: nickName}, { '_id': 0, '__v': 0}, function (err, docs) {
+   res.status(200).json(docs);
+  });
+});
+
+app.get('/api/getMessages/:roomName', authCheck, function (req, res) {
+  var roomName = req.params.roomName;
+  Message.find({room: roomName}, { '_id': 0, '__v': 0}).sort({time: 'ascending'}).exec(function(err, docs) {
+   res.status(200).json(docs);
+  });
+});
+
 app.get('/checkToken', authCheck, function (req, res) {
   res.sendStatus(200);
 });
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
@@ -143,7 +163,37 @@ app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
 
+
+
+io.on('connection', function(socket) {
+  console.log('A user connected');
+
+  //Whenever someone disconnects this piece of code executed
+  socket.on('disconnect', function () {
+     console.log('A user disconnected');
+  });
+
+  socket.on('userJoined', function({nickName, roomName}){
+    console.log('User '+nickName+' joined to '+roomName);
+    socket.join(roomName.toString());
+    socket.broadcast.to(roomName).emit('someoneJoined', {nickName: nickName});
+  });
+
+  socket.on('userLeft', function({nickName, roomName}){
+    console.log('User '+nickName+' left '+roomName);
+    socket.leave(roomName.toString());
+    socket.broadcast.to(roomName).emit('someoneLeft', {nickName: nickName});
+  });
+
+  socket.on('msgSent', function(msg){
+    console.log(msg.room);
+    io.sockets.in(msg.room).emit('messageDelivered',msg);
+    const message = new Message(msg);
+    message.save();
+  });
+});
+
 const port = process.env.PORT || 5000;
-app.listen(port);
+http.listen(port);
 
 console.log(`Server listening on ${port}`);

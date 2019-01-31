@@ -27,7 +27,6 @@ import NoMatch from './noMatch'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.css';
 import DiscussWindow from './discussWindow';
-import appStore from './appStore'
 
 const cookies = new Cookies();
 
@@ -36,6 +35,7 @@ class App extends Component {
     super(props);
     this.toggle = this.toggle.bind(this);
     this.nickNameHandler = this.nickNameHandler.bind(this);
+    this.deleteNickName = this.deleteNickName.bind(this);
 
     this.state = {
       isOpen: false,
@@ -46,10 +46,14 @@ class App extends Component {
   componentDidMount() {
     if (cookies.get('token') !== undefined) {
       var decoded = decode(cookies.get('token'));
-      appStore.nickName = decoded.nickName;
       this.setState({ nickName: decoded.nickName });
-      //alert(decoded.nickName);
     }
+  }
+
+  deleteNickName()
+  {
+    if(this.state.nickName !== "")
+    this.setState({nickName: ""});
   }
 
   nickNameHandler(nick) {
@@ -66,7 +70,7 @@ class App extends Component {
       //alert(this.state.nickName);
       return (
         <Collapse isOpen={this.state.isOpen} navbar>
-          <Nav className="ml-auto" navbar>
+          <Nav className="ml-auto" navbar >
             <NavItem>
               <NavLink tag={Link} to="/secret" href="">Secret</NavLink>
             </NavItem>
@@ -129,10 +133,10 @@ class App extends Component {
             <Route path="/login" render={(props) => <Login {...props} nickNamePropHandler={this.nickNameHandler} />} />
             <Route path="/logout" render={(props) => <Logout {...props} nickNamePropHandler={this.nickNameHandler} />} />
             <Route path="/registrace" component={Registration} />
-            <Route path="/diskuse" component={withAuth(DiscussWindow)} />
-            <Route path="/vytvoritdiskusi" component={withAuth(CreateRoom)} />
-            <Route path="/mojediskuse" component={withAuth(MyDiscuss)} />
-            <Route path="/secret" component={withAuth(Secret)} />
+            <Route path="/diskuse" component={withAuth(DiscussWindow, this.deleteNickName)} />
+            <Route path="/vytvoritdiskusi" component={withAuth(CreateRoom, this.deleteNickName)} />
+            <Route path="/mojediskuse" component={withAuth(MyDiscuss, this.deleteNickName)} />
+            <Route path="/secret" component={withAuth(Secret, this.deleteNickName)} />
             <Route component={NoMatch} />
           </Switch>
           

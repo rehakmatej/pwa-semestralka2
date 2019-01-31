@@ -16,7 +16,6 @@ import decode from 'jwt-decode';
 import Cookies from 'universal-cookie';
 import './App.css'
 
-var names = [];
 const cookies = new Cookies();
 
 export default class MyDiscuss extends Component {
@@ -44,8 +43,7 @@ export default class MyDiscuss extends Component {
             this.setState({
               rooms: data
             })
-          );
-          
+          );        
     }
 
     renderAddedList() {

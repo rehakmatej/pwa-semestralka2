@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-export default function withAuth(ComponentToProtect) {
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
+
+export default function withAuth(ComponentToProtect, deleteNameFunc) {
   return class extends Component {
     constructor() {
       super();
@@ -21,6 +25,8 @@ export default function withAuth(ComponentToProtect) {
         })
         .catch(err => {
           console.error(err);
+          cookies.remove('token');
+          deleteNameFunc();
           this.setState({ loading: false, redirect: true });
         });
     }
